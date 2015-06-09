@@ -19,18 +19,22 @@ ggpoSelectedList = ["Breakers Revenge","Garou","Jojo's Bizarre Adventure","Karno
                       "Super Street Fighter II X: GRAND MASTER CHALLENGE","Vampire Savior", \
                       "X-Men vs Street Fighter"]
                       
-imgRegex = "(?P<url>(?:([^:/?#]+):)?(?://([^/?#]*))?([^?#]*\.(?:jpg|gif|png))(?:\?([^#]*))?(?:#(.*))?)"
+imgRegex = "(?P<url>(?:([^:/?#]+):)?(?://([^/?#]*))?([^?#]*\.(?:jpg|gif|png))(?:\?([^#]*))?(?:#(.*))?)"#
+
+tourneyWhiteList = ["fumimi", "amaxing1", "hiyamaya"]
 
 class FVBot(ch.RoomManager):
 
   def onConnect(self, room):
     print("Connected to "+room.name)
-    self.savedMsgs = collections.deque(["Howdy"], 5)
-    self.userQue = collections.deque(["FVBot"], 5)
-    self.dotaShameList = None
-    self.activeUsers = []
-    self.msgSetTime = time.time()
-    self.actionTime = None
+    self.savedMsgs              = collections.deque(["Howdy"], 5)
+    self.userQue                = collections.deque(["FVBot"], 5)
+    self.dotaShameList          = None
+    self.activeUsers            = []
+    self.msgSetTime             = time.time()
+    self.actionTime             = None
+    self.tourneyPostTime        = None
+    self.tourneyMsg             = "No Tourney"
     self.setNameColor("E90")
     self.setFontColor("E90")
     random.seed()
@@ -49,6 +53,10 @@ class FVBot(ch.RoomManager):
     #    self.safePrint("{0}".format(time.time() - self.actionTime))
     
     self.CheckActiveUsers(user)
+    if self.TestTourneyMsgTime():
+        room.message(self.tourneyMsg)
+        self.tourneyPostTime = time.time()
+        msgPrint = True
 
     if (not self.actionTime) or (time.time() - self.actionTime > 1):
         #self.safePrint("inside if")
@@ -56,10 +64,10 @@ class FVBot(ch.RoomManager):
     
         matchObj = re.match(imgRegex, message.body)
         
-        if message.body.startswith("!callout"):
-          room.message(self.CalloutMsg(user, message))
-          msgPrint = True
-        elif message.body.startswith("!waterhistory"):
+        #if message.body.startswith("!callout"):
+        #  room.message(self.CalloutMsg(user, message))
+        #  msgPrint = True
+        if message.body.startswith("!waterhistory"):
           finalMsg = ""
           for msg in zip(self.savedMsgs, self.userQue):
             finalMsg = u"{0}'{1}' (by {2}) || ".format(finalMsg, msg[0], msg[1]) 
@@ -87,6 +95,14 @@ class FVBot(ch.RoomManager):
         elif message.body.startswith("!ggpo"):
           game = self.SelectGGPOGame(message)
           room.message(u"{0}".format(game))
+          msgPrint = True
+        elif message.body.startswith("!settourney"):
+          msg = self.SetTourney(user, message)
+          room.message(msg)
+          msgPrint = True
+        elif message.body.startswith("!tourney"):
+          room.message(self.tourneyMsg)
+          self.tourneyPostTime = time.time()
           msgPrint = True
         elif matchObj:
           imgUrl = self.GetImgUrl(matchObj.group("url"))
@@ -211,6 +227,30 @@ class FVBot(ch.RoomManager):
   def SelectGGPOGame(self, message):
     rand = random.randint(0, len(ggpoSelectedList)-1)
     return ggpoSelectedList[rand]
+    
+  def SetTourney(self, user, message):
+    if user.name in tourneyWhiteList:
+        msg = message.body.replace("!settourney", "")
+        msg = msg.strip()
+        if msg == "" or len(msg) > 500 or msg.startswith("!"):
+            returnMsg = u"You are being silly {0}".format(user.name)
+        else:
+            self.tourneyMsg = msg
+            returnMsg = u"Tourney message is now: {0}".format(self.tourneyMsg)
+            self.tourneyPostTime = time.time()
+    else:
+        returnMsg = u"You cannot change the tourney {0}".format(user.name)
+        
+    return returnMsg
+    
+  def TestTourneyMsgTime(self):
+    if self.tourneyPostTime and self.tourneyMsg.lower() != "no tourney":
+        if time.time() - self.tourneyPostTime > 3600: #1hour
+            return True
+        else:
+            return False
+    else:
+        return False
     
     
     
