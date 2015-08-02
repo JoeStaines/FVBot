@@ -1,1 +1,1 @@
-python fvbot.py
+bot: python fvbot.py
