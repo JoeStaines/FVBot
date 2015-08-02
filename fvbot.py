@@ -11,6 +11,7 @@ import urllib
 import json
 import requests
 import fvbotauth
+import getimageinfo
 
 ggpoSelectedList = ["Breakers Revenge","Garou","Jojo's Bizarre Adventure","Karnovs Revenge", \
                       "King of Fighters 2002","King of Fighters 98","Last Blade 2","Marvel Super Heroes", \
@@ -19,9 +20,11 @@ ggpoSelectedList = ["Breakers Revenge","Garou","Jojo's Bizarre Adventure","Karno
                       "Super Street Fighter II X: GRAND MASTER CHALLENGE","Vampire Savior", \
                       "X-Men vs Street Fighter"]
                       
+ggpoFullList =  ["2020 Super Baseball","3 Count Bout","Aggressors of Dark Kombat","Art of Fighting","Art of Fighting 2","Art of Fighting 3 - The Path of the Warrior","Bang Bead","Baseball Stars 2","Battle Flip Shot","Breakers","Breakers Revenge","Capcom Sports Club","Crouching Tiger Hidden Dragon","Cyberbots - Fullmetal Madness","Fatal Fury Special","Fatal Fury - King of Fighters","Fatal Fury 2","Fatal Fury 3 - Road to the Final Victory","Football Frenzy","Fight Fever","Galaxy Fight - Universal Warriors"," Garou - Mark of the Wolves","Ghostlop","Goal! Goal! Goal!","Hyper Street Fighter 2: The Anniversary Edition","Jojo's Bizarre Adventure","Jojo's Venture","Kabuki Klash - Far East of Eden","Karnov's Revenge","King of Fighters '94","King of Fighters '95","King of Fighters '96","King of Fighters '97","King of Fighters '98","King of Fighters '99 - Millennium Battle","King of Fighters 10th Anniversary 2005 Unique","King of Fighters 2000","King of Fighters 2001","King of Fighters 2002 - Challenge to the Ultimate Battle","King of Fighters 2003","King of Fighters Special Edition 2004","King of the Monsters 2 - The Next Thing","Kizuna Encounter - Super Tag Battle","Last Blade","Last Blade 2","League Bowling","Magical Drop II","Magical Drop III","Marvel Super Heroes","Marvel Super Heroes vs Street Fighter","Marvel vs Capcom - Clash of Super Heroes","Mighty! Pang","Money Puzzle Exchanger","Neo Bomberman","Neo Turf Masters","Neo-Geo Cup '98 - The Road to the Victory","Ninja Master's Haoh Ninpo Cho","OverTop","Panic Bomber","Pleasure Goal - 5 on 5 Mini Soccer","Power Instinct Matrimelee","Power Spikes II","Puzz Loop 2","Puzzle Bobble","Puzzle Bobble 2","Puzzle Uo Poko","Rage of the Dragons","Ragnagard","Real Bout Fatal Fury","Real Bout Fatal Fury 2 - The Newcomers","Real Bout Fatal Fury Special","Red Earth","Ring of Destruction - Slammasters II","Samurai Shodown","Samurai Shodown II","Samurai Shodown III","Samurai Shodown IV - Amakusa's Revenge","Samurai Shodown V","Samurai Shodown V Special","Saturday Night Slam Masters","Savage Reign","Street Fighter Alpha - Warriors' Dreams","Street Fighter Alpha 2","Street Fighter Alpha 3","Street Fighter II - The World Warrior","Street Fighter II' - Champion Edition (KORYU BITCH, THIS ONE IS KORYU)","Street Fighter II' - Champion Edition","Street Fighter II' - Hyper Fighting","Street Fighter III 2nd Impact: Giant Attack","Street Fighter III 3rd Strike: Fight for the Future","Street Fighter III 4th Strike","Street Fighter III: New Generation","Steet Fighter Zero 2 Alpha","Street Hoop","Super Dodge Ball","Super Gem Fighter Mini Mix - Witty Is a Fag","Super Puzzle Fighter II Turbo","Super Sidekicks","Super Sidekicks 2 - The World Championship","Super Sidekicks 3 - The Next Glory","Super Street Fighter II - The New Challengers","Super Street Fighter II X - Grand Master Challenge","SvC Chaos - SNK vs Capcom Plus","Tecmo World Soccer '96","The Lobby - That's Right Go AFK in there idiot","The Ultimate 11 - SNK Football Championship","Twinklestar Sprites","Vampire - The Night Warriors","Vampire Hunter - Darkstalkers Revenge","Vampire Hunter 2 - Darkstalkers Revenge","Vampire Savior- The Lord of Vampire","Vampire Savior 2 - The Lord of Vampire","Voltage Fighter - Gowcaizer","Waku Waku 7","Windjammers - Flying Disc Game","World Heroes","World Heroes 2","World Heroes 2 Jet","World Heroes Perfect","X-Men - Children of the Atom","X-Men vs Street Fighter"]
+                      
 imgRegex = "(?P<url>(?:([^:/?#]+):)?(?://([^/?#]*))?([^?#]*\.(?:jpg|gif|png))(?:\?([^#]*))?(?:#(.*))?)"#
 
-tourneyWhiteList = ["fumimi", "amaxing1", "hiyamaya"]
+tourneyWhiteList = ["hiyamaya"]
 
 class FVBot(ch.RoomManager):
 
@@ -195,6 +198,7 @@ class FVBot(ch.RoomManager):
     
   def DetermineImgSize(self, url):
     try:
+      notValid = False
       file = urllib2.urlopen(url)
       codeStr = str(file.getcode())
       if codeStr == "200":
@@ -208,12 +212,16 @@ class FVBot(ch.RoomManager):
         
         #self.safePrint(size)
         if size and size > 999999: #more than 1mb
-          return True
+          notValid = True
         else:
-          return False
+            #headers={"Range": "bytes=0-100"}
+            r = requests.get(url)
+            content_type, width, height = getimageinfo.getImageInfo(r.content)
+            if width >= 1000 or height >= 1000:
+                notValid = True
           
-      else:
-        return False
+      return notValid
+        
     except urllib2.URLError, e:
       self.safePrint(e.reason)
       return False
@@ -225,8 +233,12 @@ class FVBot(ch.RoomManager):
       return False
     
   def SelectGGPOGame(self, message):
-    rand = random.randint(0, len(ggpoSelectedList)-1)
-    return ggpoSelectedList[rand]
+    if "#all" in message.body:
+        rand = random.randint(0, len(ggpoFullList)-1)
+        return ggpoFullList[rand]
+    else:
+        rand = random.randint(0, len(ggpoSelectedList)-1)
+        return ggpoSelectedList[rand]
     
   def SetTourney(self, user, message):
     if user.name in tourneyWhiteList:
