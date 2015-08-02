@@ -1,1 +1,1 @@
-web: python fvbot.py
+python fvbot.py
