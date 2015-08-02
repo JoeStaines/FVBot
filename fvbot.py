@@ -271,5 +271,5 @@ class FVBot(ch.RoomManager):
 
 if __name__ == "__main__":
   #FVBot.easy_start(["fv-se"], fvbotauth.FVBOT_USER, fvbotauth.FVBOT_PASS, True)
-  FVBot.easy_start(["fv-se"], os.environ("FVBOT_USER"), os.environ("FVBOT_PASS"), True)
+  FVBot.easy_start(["fv-se"], os.environ["FVBOT_USER"], os.environ["FVBOT_PASS"], True)
   #FVBot.easy_start(["sfcii-hdr-ce"], fvbotauth.FVBOT_USER, fvbotauth.FVBOT_PASS, True)
