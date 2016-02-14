@@ -245,7 +245,7 @@ class FVBot(ch.RoomManager):
     
   def SetTourney(self, user, message):
     #if user.name in tourneyWhiteList:
-    if not user.name.startswith("!") or not user.name.startswith("#"):
+    if not user.name.startswith("!") and not user.name.startswith("#"):
         msg = message.body.replace("!settourney", "")
         msg = msg.strip()
         if msg == "" or len(msg) > 500 or msg.startswith("!"):
