@@ -87,6 +87,8 @@ class FVBot(ch.RoomManager):
             self.savedMsgs.appendleft(msg)
             self.userQue.appendleft(user.name)
             self.msgSetTime = time.time()
+            os.environ["WATER"] = self.savedMsgs[0]
+            self.safePrint(os.environ["WATER"])
             room.message(u"Message is now {0}".format(self.savedMsgs[0]))
             msgPrint = True
         elif message.body.startswith("!water"):
@@ -242,17 +244,17 @@ class FVBot(ch.RoomManager):
         return ggpoSelectedList[rand]
     
   def SetTourney(self, user, message):
-    if user.name in tourneyWhiteList:
-        msg = message.body.replace("!settourney", "")
-        msg = msg.strip()
-        if msg == "" or len(msg) > 500 or msg.startswith("!"):
-            returnMsg = u"You are being silly {0}".format(user.name)
-        else:
-            self.tourneyMsg = msg
-            returnMsg = u"Tourney message is now: {0}".format(self.tourneyMsg)
-            self.tourneyPostTime = time.time()
+    #if user.name in tourneyWhiteList:
+    msg = message.body.replace("!settourney", "")
+    msg = msg.strip()
+    if msg == "" or len(msg) > 500 or msg.startswith("!"):
+        returnMsg = u"You are being silly {0}".format(user.name)
     else:
-        returnMsg = u"You cannot change the tourney {0}".format(user.name)
+        self.tourneyMsg = msg
+        returnMsg = u"Tourney message is now: {0}".format(self.tourneyMsg)
+        self.tourneyPostTime = time.time()
+    #else:
+        #returnMsg = u"You cannot change the tourney {0}".format(user.name)
         
     return returnMsg
     
@@ -270,6 +272,6 @@ class FVBot(ch.RoomManager):
           
 
 if __name__ == "__main__":
-  #FVBot.easy_start(["fv-se"], fvbotauth.FVBOT_USER, fvbotauth.FVBOT_PASS, True)
   FVBot.easy_start(["fv-se"], os.environ["FVBOT_USER"], os.environ["FVBOT_PASS"], True)
+  #FVBot.easy_start(["sfcii-hdr-ce"], os.environ["FVBOT_USER"], os.environ["FVBOT_PASS"], True)
   #FVBot.easy_start(["sfcii-hdr-ce"], fvbotauth.FVBOT_USER, fvbotauth.FVBOT_PASS, True)
