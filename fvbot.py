@@ -245,16 +245,17 @@ class FVBot(ch.RoomManager):
     
   def SetTourney(self, user, message):
     #if user.name in tourneyWhiteList:
-    msg = message.body.replace("!settourney", "")
-    msg = msg.strip()
-    if msg == "" or len(msg) > 500 or msg.startswith("!"):
-        returnMsg = u"You are being silly {0}".format(user.name)
+    if not user.name.startswith("!") or not user.name.startswith("#"):
+        msg = message.body.replace("!settourney", "")
+        msg = msg.strip()
+        if msg == "" or len(msg) > 500 or msg.startswith("!"):
+            returnMsg = u"You are being silly {0}".format(user.name)
+        else:
+            self.tourneyMsg = msg
+            returnMsg = u"Tourney message is now: {0}".format(self.tourneyMsg)
+            self.tourneyPostTime = time.time()
     else:
-        self.tourneyMsg = msg
-        returnMsg = u"Tourney message is now: {0}".format(self.tourneyMsg)
-        self.tourneyPostTime = time.time()
-    #else:
-        #returnMsg = u"You cannot change the tourney {0}".format(user.name)
+        returnMsg = u"You cannot change the tourney {0}".format(user.name)
         
     return returnMsg
     
