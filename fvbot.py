@@ -87,8 +87,6 @@ class FVBot(ch.RoomManager):
             self.savedMsgs.appendleft(msg)
             self.userQue.appendleft(user.name)
             self.msgSetTime = time.time()
-            os.environ["WATER"] = self.savedMsgs[0]
-            self.safePrint(os.environ["WATER"])
             room.message(u"Message is now {0}".format(self.savedMsgs[0]))
             msgPrint = True
         elif message.body.startswith("!water"):
