@@ -13,6 +13,7 @@ import json
 import requests
 #import fvbotauth
 import getimageinfo
+from bs4 import BeautifulSoup
 
 ggpoSelectedList = ["Breakers Revenge","Garou","Jojo's Bizarre Adventure","Karnovs Revenge", \
                       "King of Fighters 2002","King of Fighters 98","Last Blade 2","Marvel Super Heroes", \
@@ -77,6 +78,10 @@ class FVBot(ch.RoomManager):
             finalMsg = u"{0}'{1}' (by {2}) || ".format(finalMsg, msg[0], msg[1]) 
           room.message(finalMsg)
           msgPrint = True
+        elif self.CheckRudeToBot(message.body):
+            insult = self.GetInsult()
+            room.message(u"{0}".format(insult))
+            msgPrint = True
         elif message.body.startswith("!waterset"):
           msg = message.body.replace("!waterset", "")
           msg = msg.strip()
@@ -266,11 +271,30 @@ class FVBot(ch.RoomManager):
     else:
         return False
     
+  def GetInsult(self):
+    url = 'http://www.insultgenerator.org'
+    r = requests.get(url)
+    if r.status_code == 200:
+        parsed = re.sub('<br>', '', r.text)
+        parsed = re.sub('\n', '', parsed)
+        parsed = re.sub('&nbsp;', ' ', parsed)
+        soup = BeautifulSoup(parsed, "html.parser")
+        return soup.find("div", { "class": "wrap"}).get_text()
+    else:
+        return None
     
     
-          
+  def CheckRudeToBot(self, message):
+    rudelist = ["fuck", "fug"]
+    for word in rudelist:
+        if word in message:
+            if 'bot' in message:
+                return True
+            
+    return False
 
 if __name__ == "__main__":
   FVBot.easy_start(["fv-se"], os.environ["FVBOT_USER"], os.environ["FVBOT_PASS"], True)
+  #FVBot.easy_start(["testingmybot"], os.environ["FVBOT_USER"], os.environ["FVBOT_PASS"], True)
   #FVBot.easy_start(["sfcii-hdr-ce"], os.environ["FVBOT_USER"], os.environ["FVBOT_PASS"], True)
   #FVBot.easy_start(["sfcii-hdr-ce"], fvbotauth.FVBOT_USER, fvbotauth.FVBOT_PASS, True)
