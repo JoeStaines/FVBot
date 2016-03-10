@@ -287,8 +287,8 @@ class FVBot(ch.RoomManager):
   def CheckRudeToBot(self, message):
     rudelist = ["fuck", "fug"]
     for word in rudelist:
-        if word in message:
-            if 'bot' in message:
+        if word in message.toLower():
+            if 'bot' in message.toLower():
                 return True
             
     return False
