@@ -49,6 +49,7 @@ class FVBot(ch.RoomManager):
 
   def onDisconnect(self, room):
     print("Disconnected from "+room.name)
+    self.reconnect()
 
   def onMessage(self, room, user, message):
     # Use with PsyfrBot framework? :3
