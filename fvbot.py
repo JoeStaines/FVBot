@@ -40,6 +40,7 @@ class FVBot(ch.RoomManager):
     self.actionTime             = None
     self.tourneyPostTime        = None
     self.tourneyMsg             = "No Tourney"
+    self.userIPdict                 = dict()
     self.setNameColor("E90")
     self.setFontColor("E90")
     random.seed()
@@ -53,7 +54,7 @@ class FVBot(ch.RoomManager):
 
   def onMessage(self, room, user, message):
     # Use with PsyfrBot framework? :3
-    self.safePrint(user.name + ': ' + message.body)
+    self.safePrint(user.name + ': ' + message.body + ':' + message.ip)
     #print(message.body.encode("utf-8"))
     #if self.actionTime:
     #    self.safePrint("{0}".format(time.time() - self.actionTime))
@@ -63,6 +64,9 @@ class FVBot(ch.RoomManager):
         room.message(self.tourneyMsg)
         self.tourneyPostTime = time.time()
         msgPrint = True
+        
+    # record ip of user
+    self.userIPdict[user.name] = message.ip
 
     if (not self.actionTime) or (time.time() - self.actionTime > 1):
         #self.safePrint("inside if")
@@ -113,6 +117,9 @@ class FVBot(ch.RoomManager):
         elif message.body.startswith("!tourney"):
           room.message(self.tourneyMsg)
           self.tourneyPostTime = time.time()
+          msgPrint = True
+        elif message.body.startswith("!ip"):
+          msg = self.getUserIP(message)
           msgPrint = True
         elif matchObj:
           imgUrl = self.GetImgUrl(matchObj.group("url"))
@@ -291,6 +298,14 @@ class FVBot(ch.RoomManager):
         if word in message.lower():
             if 'bot' in message.lower():
                 return True
+                
+  def GetUserIP(self, message):
+    user = message.body.replace("!ip", "")
+    user = user.strip()
+    if user in self.userIPdict:
+        return self.userIPdict[user]
+    else:
+        return "Cannot find IP of that user"
             
     return False
 
