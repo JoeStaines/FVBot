@@ -335,7 +335,7 @@ class FVBot(ch.RoomManager):
     jpn = datetime.now(timezone('Japan'))
     
     fmt = "%H:%M:%S"
-    ret = "UTC: " + utc.strftime(fmt) + "\n"
+    ret = "\nUTC: " + utc.strftime(fmt) + "\n"
     ret += "EST: " + est.strftime(fmt) + "\n"
     ret += "PDT: " + pdt.strftime(fmt) + "\n"
     ret += "JPN: " + jpn.strftime(fmt)
