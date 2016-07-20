@@ -309,12 +309,12 @@ class FVBot(ch.RoomManager):
   def GetUserIP(self, message):
     user = message.body.replace("!ip", "")
     user = user.strip()
-    if user in self.userIPdict:
+    if user.lower() in self.userIPdict:
         return self.userIPdict[user.lower()]
     else:
         return "Cannot find IP of that user"
     
-  def GetBanlist(room):
+  def GetBanlist(self, room):
     banlist = room.banlist
     if banlist:
         return ", ".join(banlist)
