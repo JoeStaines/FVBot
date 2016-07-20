@@ -330,12 +330,14 @@ class FVBot(ch.RoomManager):
         
   def GetTime(self):
     utc = datetime.now()
+    gmt = datetime.now(timezone('Europe/London'))
     est = datetime.now(timezone('US/Eastern'))
     pdt = datetime.now(timezone('US/Pacific'))
     jpn = datetime.now(timezone('Japan'))
     
     fmt = "%H:%M:%S"
-    ret = "\nUTC: " + utc.strftime(fmt) + "\n"
+    ret = "\n\nUTC: " + utc.strftime(fmt) + "\n"
+    ret = "GMT: " + gmt.strftime(fmt) + "\n" 
     ret += "EST: " + est.strftime(fmt) + "\n"
     ret += "PDT: " + pdt.strftime(fmt) + "\n"
     ret += "JPN: " + jpn.strftime(fmt)
