@@ -123,7 +123,8 @@ class FVBot(ch.RoomManager):
           room.message(msg)
           msgPrint = True
         elif message.body.startswith("!banlist"):
-          room.message(", ".join(room.banlst))
+          msg = self.GetBanlist(room)
+          room.message(msg)
           msgPrint = True
         elif matchObj:
           imgUrl = self.GetImgUrl(matchObj.group("url"))
@@ -303,6 +304,8 @@ class FVBot(ch.RoomManager):
             if 'bot' in message.lower():
                 return True
                 
+    return False
+    
   def GetUserIP(self, message):
     user = message.body.replace("!ip", "")
     user = user.strip()
@@ -310,8 +313,13 @@ class FVBot(ch.RoomManager):
         return self.userIPdict[user.lower()]
     else:
         return "Cannot find IP of that user"
-            
-    return False
+    
+  def GetBanlist(room):
+    banlist = room.banlist
+    if banlist:
+        return ", ".join(banlist)
+    else:
+        return "No one in the ban list! For now..."
 
 if __name__ == "__main__":
   FVBot.easy_start(["fvumfe"], os.environ["FVBOT_USER"], os.environ["FVBOT_PASS"], True)
