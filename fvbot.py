@@ -67,6 +67,12 @@ class FVBot(ch.RoomManager):
         
     # record ip of user
     self.userIPdict[user.name.lower()] = message.ip
+    
+    # test super ban
+    if user.name == "!anon4965":
+        room.deleteMessage(message)
+        room.message("removed anon4695")
+        msgPrint = True
 
     if (not self.actionTime) or (time.time() - self.actionTime > 1):
         #self.safePrint("inside if")
