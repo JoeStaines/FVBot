@@ -1322,7 +1322,7 @@ class Room:
 
   def clearall(self):
     """Clear all messages. (Owner only)"""
-    if self.getLevel(self.user) == 2:
+    if self.getLevel(self.user) == 1:
       self._sendCommand("clearall")
 
   def rawBan(self, name, ip, unid):

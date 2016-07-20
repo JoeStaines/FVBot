@@ -13,6 +13,9 @@ import json
 import requests
 #import fvbotauth
 import getimageinfo
+
+from datetime import datetime
+from pytz import timezone
 from bs4 import BeautifulSoup
 
 ggpoSelectedList = ["Breakers Revenge","Garou","Jojo's Bizarre Adventure","Karnovs Revenge", \
@@ -67,12 +70,6 @@ class FVBot(ch.RoomManager):
         
     # record ip of user
     self.userIPdict[user.name.lower()] = message.ip
-    
-    # test super ban
-    if user.name == "HiyaMaya":
-        room.deleteMessage(message)
-        room.message("removed HiyaMaya")
-        msgPrint = True
 
     if (not self.actionTime) or (time.time() - self.actionTime > 1):
         #self.safePrint("inside if")
@@ -130,6 +127,10 @@ class FVBot(ch.RoomManager):
           msgPrint = True
         elif message.body.startswith("!banlist"):
           msg = self.GetBanlist(room)
+          room.message(msg)
+          msgPrint = True
+        elif message.body.startswith("!time"):
+          msg = self.GetTime()
           room.message(msg)
           msgPrint = True
         elif matchObj:
@@ -326,6 +327,19 @@ class FVBot(ch.RoomManager):
         return ", ".join(banlist)
     else:
         return "No one in the ban list! For now..."
+        
+  def GetTime(self):
+    utc = datetime.now()
+    est = datetime.now(timezone('US/Eastern'))
+    pdt = datetime.now(timezone('US/Pacific'))
+    jpn = datetime.now(timezone('Japan'))
+    
+    fmt = "%H:%M:%S"
+    ret = "UTC: " + utc.strftime(fmt) + "\n"
+    ret += "EST: " + est.strftime(fmt) + "\n"
+    ret += "PDT: " + pdt.strftime(fmt) + "\n"
+    ret += "JPN: " + jpn.strftime(fmt)
+    return ret
 
 if __name__ == "__main__":
   FVBot.easy_start(["fvumfe"], os.environ["FVBOT_USER"], os.environ["FVBOT_PASS"], True)
