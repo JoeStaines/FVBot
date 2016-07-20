@@ -119,7 +119,7 @@ class FVBot(ch.RoomManager):
           self.tourneyPostTime = time.time()
           msgPrint = True
         elif message.body.startswith("!ip"):
-          msg = self.getUserIP(message)
+          msg = self.GetUserIP(message)
           msgPrint = True
         elif matchObj:
           imgUrl = self.GetImgUrl(matchObj.group("url"))
