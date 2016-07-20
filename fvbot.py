@@ -66,7 +66,7 @@ class FVBot(ch.RoomManager):
         msgPrint = True
         
     # record ip of user
-    self.userIPdict[user.name] = message.ip
+    self.userIPdict[user.name.lower()] = message.ip
 
     if (not self.actionTime) or (time.time() - self.actionTime > 1):
         #self.safePrint("inside if")
@@ -303,7 +303,7 @@ class FVBot(ch.RoomManager):
     user = message.body.replace("!ip", "")
     user = user.strip()
     if user in self.userIPdict:
-        return self.userIPdict[user]
+        return self.userIPdict[user.lower()]
     else:
         return "Cannot find IP of that user"
             
