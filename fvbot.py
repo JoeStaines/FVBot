@@ -295,7 +295,7 @@ class FVBot(ch.RoomManager):
     return False
 
 if __name__ == "__main__":
-  FVBot.easy_start(["fv-se"], os.environ["FVBOT_USER"], os.environ["FVBOT_PASS"], True)
+  FVBot.easy_start(["fvumfe"], os.environ["FVBOT_USER"], os.environ["FVBOT_PASS"], True)
   #FVBot.easy_start(["fv-se"], os.environ["FVBOT_USER"], os.environ["FVBOT_PASS"], True)
   #FVBot.easy_start(["testingmybot"], os.environ["FVBOT_USER"], os.environ["FVBOT_PASS"], True)
   #FVBot.easy_start(["sfcii-hdr-ce"], os.environ["FVBOT_USER"], os.environ["FVBOT_PASS"], True)
