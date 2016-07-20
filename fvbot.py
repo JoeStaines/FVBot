@@ -122,6 +122,9 @@ class FVBot(ch.RoomManager):
           msg = self.GetUserIP(message)
           room.message(msg)
           msgPrint = True
+        elif message.body.startswith("!banlist"):
+          room.message(", ".join(room.banlst))
+          msgPrint = True
         elif matchObj:
           imgUrl = self.GetImgUrl(matchObj.group("url"))
           if imgUrl:
