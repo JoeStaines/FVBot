@@ -120,6 +120,7 @@ class FVBot(ch.RoomManager):
           msgPrint = True
         elif message.body.startswith("!ip"):
           msg = self.GetUserIP(message)
+          room.message(msg)
           msgPrint = True
         elif matchObj:
           imgUrl = self.GetImgUrl(matchObj.group("url"))
