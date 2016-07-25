@@ -122,9 +122,10 @@ class FVBot(ch.RoomManager):
           self.tourneyPostTime = time.time()
           msgPrint = True
         elif message.body.startswith("!ip"):
-          msg = self.GetUserIP(message)
-          room.message(msg)
-          msgPrint = True
+          pass
+          #msg = self.GetUserIP(message)
+          #room.message(msg)
+          #msgPrint = True
         elif message.body.startswith("!banlist"):
           msg = self.GetBanlist(room)
           room.message(msg)
